@@ -1,0 +1,23 @@
+{
+    "name": "zozlak/query-part",
+    "type": "library",
+    "description": "Container class for an SQL query and its parameters",
+    "keywords": [],
+    "homepage": "https://github.com/zozlak/queryPart",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mateusz Żółtak",
+            "email": "zozlak@zozlak.org",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "zozlak\\queryPart\\": "src/zozlak/queryPart"
+        }
+    }
+}
