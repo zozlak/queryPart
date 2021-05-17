@@ -19,5 +19,8 @@
         "psr-4": {
             "zozlak\\queryPart\\": "src/zozlak/queryPart"
         }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "*"
     }
 }
