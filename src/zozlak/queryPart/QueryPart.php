@@ -35,24 +35,21 @@ use RuntimeException;
  */
 class QueryPart {
 
-    /**
-     *
-     * @var string
-     */
-    public $query;
+    static private int $n = 0;
+    public string $query;
 
     /**
      *
      * @var array<mixed>
      */
-    public $param;
+    public array $param;
 
     /**
      * Optional list of query columns
      * 
-     * @var string[]
+     * @var array<string>
      */
-    public $columns;
+    public array $columns;
 
     /**
      * 
@@ -83,4 +80,20 @@ class QueryPart {
         return $query;
     }
 
+    /**
+     * Pastes the join code and the query if the query is not empty.
+     * 
+     * If the query is empty, returns an empty string.
+     * 
+     * @param string $type left side of the join clause, e.g. `LEFT JOIN`
+     * @param string $clause right side of the join clause, e.g. `USING(id)`
+     * @return string
+     */
+    public function join(string $type, string $clause): string {
+        if (empty($this->query)) {
+            return '';
+        }
+        self::$n++;
+        return $type . " (" . $this->query . ") _t" . self::$n . " " . $clause;
+    }
 }
