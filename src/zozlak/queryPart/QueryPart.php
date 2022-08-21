@@ -35,21 +35,30 @@ use RuntimeException;
  */
 class QueryPart {
 
-    static private int $n = 0;
-    public string $query;
+    /**
+     * 
+     * @var int
+     */
+    static private $n = 0;
+
+    /**
+     * 
+     * @var string
+     */
+    public $query;
 
     /**
      *
      * @var array<mixed>
      */
-    public array $param;
+    public $param;
 
     /**
      * Optional list of query columns
      * 
      * @var array<string>
      */
-    public array $columns;
+    public $columns;
 
     /**
      * 
