@@ -75,14 +75,16 @@ class QueryPart {
 
     public function __toString(): string {
         $query = $this->query;
+        $pos = 0;
         foreach ($this->param as $i) {
-            $pos = strpos($query, '?');
+            $pos = strpos($query, '?', $pos);
             if ($pos === false) {
                 throw new RuntimeException('More parameters than placeholders');
             }
             $query = substr_replace($query, "'$i'", $pos, 1);
+            $pos += strlen($i) + 2;
         }
-        $pos = strpos($query, '?');
+        $pos = strpos($query, '?', $pos);
         if ($pos !== false) {
             throw new RuntimeException('More placeholders than parameters');
         }
