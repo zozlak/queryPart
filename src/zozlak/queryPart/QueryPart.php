@@ -33,36 +33,26 @@ use RuntimeException;
  *
  * @author zozlak
  */
-class QueryPart {
+class QueryPart extends \Stringable {
 
-    /**
-     * 
-     * @var int
-     */
-    static private $n = 0;
-
-    /**
-     * 
-     * @var string
-     */
-    public $query;
+    static private int $n = 0;
+    public string $query;
 
     /**
      *
      * @var array<mixed>
      */
-    public $param;
+    public array $param;
 
     /**
      * Optional list of query columns
      * 
      * @var array<string>
      */
-    public $columns;
+    public array $columns;
 
     /**
      * 
-     * @param string $query
      * @param array<mixed> $param
      * @param array<string> $columns
      */
@@ -75,19 +65,25 @@ class QueryPart {
 
     public function __toString(): string {
         $query = $this->query;
-        $pos = 0;
+        $pos   = 0;
         foreach ($this->param as $i) {
             $pos = strpos($query, '?', $pos);
             if ($pos === false) {
                 throw new RuntimeException('More parameters than placeholders');
             }
             $query = substr_replace($query, "'$i'", $pos, 1);
-            $pos += strlen($i) + 2;
+            $pos   += strlen($i) + 2;
         }
         $pos = strpos($query, '?', $pos);
         if ($pos !== false) {
             throw new RuntimeException('More placeholders than parameters');
         }
+        return $query;
+    }
+
+    public function execute(\PDO $pdo): \PDOStatement {
+        $query = $pdo->prepare($this->query);
+        $query->execute($this->param);
         return $query;
     }
 
@@ -98,7 +94,6 @@ class QueryPart {
      * 
      * @param string $type left side of the join clause, e.g. `LEFT JOIN`
      * @param string $clause right side of the join clause, e.g. `USING(id)`
-     * @return string
      */
     public function join(string $type, string $clause): string {
         if (empty($this->query)) {
