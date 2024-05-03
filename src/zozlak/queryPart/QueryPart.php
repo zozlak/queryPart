@@ -26,17 +26,21 @@
 
 namespace zozlak\queryPart;
 
+use PDO;
+use PDOStatement;
 use RuntimeException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Simple container for SQL query and its param
  *
  * @author zozlak
  */
-class QueryPart extends \Stringable {
+class QueryPart implements \Stringable {
 
     static private int $n = 0;
     public string $query;
+    public LoggerInterface | null $log;
 
     /**
      *
@@ -57,10 +61,12 @@ class QueryPart extends \Stringable {
      * @param array<string> $columns
      */
     public function __construct(string $query = '', array $param = [],
-                                array $columns = []) {
+                                array $columns = [],
+                                ?LoggerInterface $log = null) {
         $this->query   = $query;
         $this->param   = $param;
         $this->columns = $columns;
+        $this->log     = $log;
     }
 
     public function __toString(): string {
@@ -81,9 +87,12 @@ class QueryPart extends \Stringable {
         return $query;
     }
 
-    public function execute(\PDO $pdo): \PDOStatement {
+    public function execute(PDO $pdo): PDOStatement {
+        $this->log?->info((string) $this);
+        $t     = microtime(true);
         $query = $pdo->prepare($this->query);
         $query->execute($this->param);
+        $this->log?->info('Execution time ' . (microtime(true) - $t));
         return $query;
     }
 
